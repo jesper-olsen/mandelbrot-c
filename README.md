@@ -7,6 +7,8 @@ The program compiles to a single native executable. It can render the Mandelbrot
 ### Other Language Implementations
 
 This project compares the performance and features of Mandelbrot set generation in different languages.
+Single Thread/Multi-thread shows the number of seconds it takes to do a 5000x5000 calculation.
+
 
 | Language    | Repository                                                         | Single Thread   | Multi-Thread |
 | :--------   | :----------------------------------------------------------------- | ---------------:| -----------: |
