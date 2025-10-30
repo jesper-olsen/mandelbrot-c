@@ -13,4 +13,4 @@ unset ytics
 
 set palette defined (0 "black", 1 "white")
 
-plot 'image.txt' matrix with image
+plot 'image.dat' matrix with image

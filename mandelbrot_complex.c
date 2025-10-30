@@ -1,12 +1,13 @@
 /**
- * @file mandelbrot.c
- * @brief Generates Mandelbrot set visualizations in ASCII or for gnuplot.
+ * @file mandelbrot_complex.c
+ * @brief Generates Mandelbrot set visualizations using C23 complex types.
  *
  * A modern C implementation for a cross-language comparison project.
  * It parses command-line arguments in the format key=value.
+ * This version uses the <complex.h> header for more expressive math.
  *
  * Compilation:
- * gcc -o mandelbrot mandelbrot.c -lm -O3
+ * gcc -std=c23 -o mandelbrot mandelbrot_complex.c -lm -O3
  *
  * Usage:
  * ./mandelbrot
@@ -19,6 +20,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <math.h>
+#include <complex.h>
 
 typedef struct {
     int width;
@@ -47,24 +49,21 @@ char cnt2char(int value, int max_iter) {
 
 /**
  * @brief Calculates the escape time for a point in the complex plane.
- * @param cr The real part of the complex number c.
- * @param ci The imaginary part of the complex number c.
+ * @param c The complex number to test.
  * @param max_iter The maximum number of iterations.
  * @return An integer representing how close the point is to the set.
  */
-int escape_time(double cr, double ci, int max_iter) {
-    double zr = 0.0, zi = 0.0;
+int escape_time(double complex c, int max_iter) {
+    double complex z = 0.0 + 0.0 * I; // Start with z = 0
     int iter;
 
     for (iter = 0; iter < max_iter; ++iter) {
-        double zr2 = zr * zr;
-        double zi2 = zi * zi;
-        if (zr2 + zi2 > 4.0) {
+        // The magnitude squared is creal(z)*creal(z) + cimag(z)*cimag(z)
+        // This is more efficient than cabs(z) > 2.0, as it avoids a sqrt()
+        if (creal(z) * creal(z) + cimag(z) * cimag(z) > 4.0) {
             break;
         }
-        double tmp = zr2 - zi2 + cr;
-        zi = 2.0 * zr * zi + ci;
-        zr = tmp;
+        z = z * z + c;
     }
     return max_iter - iter;
 }
@@ -81,7 +80,9 @@ void ascii_output(const Config *config) {
         for (int x = 0; x < config->width; ++x) {
             double real = config->ll_x + x * fwidth / config->width;
             double imag = config->ur_y - y * fheight / config->height;
-            int iter = escape_time(real, imag, config->max_iter);
+            double complex c = real + imag * I;
+
+            int iter = escape_time(c, config->max_iter);
             putchar(cnt2char(iter, config->max_iter));
         }
         putchar('\n');
@@ -100,7 +101,9 @@ void gptext_output(const Config *config) {
         for (int x = 0; x < config->width; ++x) {
             double real = config->ll_x + x * fwidth / config->width;
             double imag = config->ur_y - y * fheight / config->height;
-            int iter = escape_time(real, imag, config->max_iter);
+            double complex c = real + imag * I;
+
+            int iter = escape_time(c, config->max_iter);
             // Print comma separator for all but the first value in a row
             printf("%s%d", (x > 0 ? ", " : ""), iter);
         }

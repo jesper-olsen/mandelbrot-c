@@ -1,13 +1,23 @@
 CC = gcc
-CFLAGS = -Wall -O3
+CFLAGS = -Wall -O3 -std=c23
 LDFLAGS = -lm
 
-TARGET = mandelbrot
+ASTYLE  := astyle --suffix=none --align-pointer=name --pad-oper
 
-all: $(TARGET)
+TARGETS := mandelbrot mandelbrot_complex
 
-$(TARGET): $(TARGET).c
-	$(CC) $(CFLAGS) -o $(TARGET) $(TARGET).c $(LDFLAGS)
+SRC     := mandelbrot.c mandelbrot_complex.c
+HEADER  :=
+
+.PHONY: all clean fmt
+
+all: $(TARGETS)
+
+$(TARGETS): %: %.c
+	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 clean:
-	rm -f $(TARGET)
+	rm -f $(TARGETS)
+
+fmt:
+	$(ASTYLE) $(SRC) $(HEADER)
