@@ -92,19 +92,69 @@ void ascii_output(const Config *config) {
  * @brief Generates text output suitable for gnuplot to stdout.
  * @param config A pointer to the configuration struct.
  */
+//void gptext_output(const Config *config) {
+//    double fwidth = config->ur_x - config->ll_x;
+//    double fheight = config->ur_y - config->ll_y;
+//
+//    for (int y = config->height; y > 0; --y) {
+//        for (int x = 0; x < config->width; ++x) {
+//            double real = config->ll_x + x * fwidth / config->width;
+//            double imag = config->ur_y - y * fheight / config->height;
+//            int iter = escape_time(real, imag, config->max_iter);
+//            // Print comma separator for all but the first value in a row
+//            printf("%s%d", (x > 0 ? ", " : ""), iter);
+//        }
+//        printf("\n");
+//    }
+//}
+
 void gptext_output(const Config *config) {
     double fwidth = config->ur_x - config->ll_x;
     double fheight = config->ur_y - config->ll_y;
 
+    // Create a buffer to store one row of text data.
+    // Estimate size: max 3 digits for iter (255), 2 chars for ", ", plus safety.
+    // 5000 width * 6 chars/pixel = 30,000 bytes. 64KB is plenty safe.
+    char buffer[65536]; 
+
     for (int y = config->height; y > 0; --y) {
+        char *ptr = buffer; // Pointer to the current position in the buffer
+        
         for (int x = 0; x < config->width; ++x) {
             double real = config->ll_x + x * fwidth / config->width;
             double imag = config->ur_y - y * fheight / config->height;
             int iter = escape_time(real, imag, config->max_iter);
-            // Print comma separator for all but the first value in a row
-            printf("%s%d", (x > 0 ? ", " : ""), iter);
+
+            // Manually format the integer into the buffer
+            // This is much faster than sprintf or printf inside a loop
+            if (x > 0) {
+                *ptr++ = ',';
+                *ptr++ = ' ';
+            }
+            
+            // Convert integer to string (fast manual itoa)
+            if (iter >= 100) {
+                *ptr++ = '0' + (iter / 100);
+                iter %= 100;
+                *ptr++ = '0' + (iter / 10);
+                *ptr++ = '0' + (iter % 10);
+            } else if (iter >= 10) {
+                *ptr++ = '0' + (iter / 10);
+                *ptr++ = '0' + (iter % 10);
+            } else {
+                *ptr++ = '0' + iter;
+            }
+            
+            // Safety check: Flush buffer if it's getting full
+            if (ptr - buffer > sizeof(buffer) - 32) {
+                fwrite(buffer, 1, ptr - buffer, stdout);
+                ptr = buffer;
+            }
         }
-        printf("\n");
+        *ptr++ = '\n';
+        
+        // Write the remaining buffer for this row
+        fwrite(buffer, 1, ptr - buffer, stdout);
     }
 }
 

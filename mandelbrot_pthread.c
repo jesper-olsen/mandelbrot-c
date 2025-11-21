@@ -78,45 +78,6 @@ static inline int escape_time(double cr, double ci, int max_iter) {
 }
 
 /**
- * @brief Renders the Mandelbrot set as ASCII art to stdout.
- * @param config A pointer to the configuration struct.
- */
-void ascii_output(const Config *config) {
-    double fwidth = config->ur_x - config->ll_x;
-    double fheight = config->ur_y - config->ll_y;
-
-    for (int y = 0; y < config->height; ++y) {
-        for (int x = 0; x < config->width; ++x) {
-            double real = config->ll_x + x * fwidth / config->width;
-            double imag = config->ur_y - y * fheight / config->height;
-            int iter = escape_time(real, imag, config->max_iter);
-            putchar(cnt2char(iter, config->max_iter));
-        }
-        putchar('\n');
-    }
-}
-
-/**
- * @brief Generates text output suitable for gnuplot to stdout.
- * @param config A pointer to the configuration struct.
- */
-void gptext_output(const Config *config) {
-    double fwidth = config->ur_x - config->ll_x;
-    double fheight = config->ur_y - config->ll_y;
-
-    for (int y = config->height; y > 0; --y) {
-        for (int x = 0; x < config->width; ++x) {
-            double real = config->ll_x + x * fwidth / config->width;
-            double imag = config->ur_y - y * fheight / config->height;
-            int iter = escape_time(real, imag, config->max_iter);
-            // Print comma separator for all but the first value in a row
-            printf("%s%d", (x > 0 ? ", " : ""), iter);
-        }
-        printf("\n");
-    }
-}
-
-/**
  * @brief Parses a single "key=value" command-line argument.
  * @param arg The string argument from argv.
  * @param config A pointer to the configuration struct to be updated.
@@ -185,25 +146,85 @@ void *thread_mandelbrot(void *arg) {
     return NULL;
 }
 
+//void final_output(const Config *config, const int *result_buffer) {
+//    if (config->png) {
+//        // Output for gnuplot 
+//        for (int y = config->height - 1; y >= 0; --y) { // Loop reversed for gnuplot
+//            for (int x = 0; x < config->width; ++x) {
+//                printf("%s%d", (x > 0 ? ", " : ""), result_buffer[y * config->width + x]);
+//            }
+//            printf("\n");
+//        }
+//    } else {
+//        // ASCII output 
+//        for (int y = 0; y < config->height; ++y) {
+//            for (int x = 0; x < config->width; ++x) {
+//                int iter = result_buffer[y * config->width + x];
+//                putchar(cnt2char(iter, config->max_iter));
+//            }
+//            printf("\n");
+//        }
+//    }
+//}
+
 void final_output(const Config *config, const int *result_buffer) {
+    // Calculate buffer size for one row:
+    // Max 3 digits + 2 chars (", ") = 5 bytes/pixel. Add padding.
+    size_t row_buffer_size = (size_t)config->width * 6 + 64;
+    
+    char *buffer = malloc(row_buffer_size);
+    if (!buffer) {
+        perror("Failed to allocate output buffer");
+        exit(EXIT_FAILURE);
+    }
+
     if (config->png) {
-        // Output for gnuplot 
-        for (int y = config->height - 1; y >= 0; --y) { // Loop reversed for gnuplot
+        // Gnuplot output (Y reversed)
+        for (int y = config->height - 1; y >= 0; --y) {
+            char *ptr = buffer;
+            // Calculate the offset for the start of this row in the flat array
+            const int *row_start = &result_buffer[y * config->width];
+
             for (int x = 0; x < config->width; ++x) {
-                printf("%s%d", (x > 0 ? ", " : ""), result_buffer[y * config->width + x]);
+                int iter = row_start[x];
+
+                if (x > 0) {
+                    *ptr++ = ',';
+                    *ptr++ = ' ';
+                }
+
+                // Manual Integer-to-String (itoa)
+                if (iter >= 100) {
+                    *ptr++ = '0' + (iter / 100);
+                    iter %= 100;
+                    *ptr++ = '0' + (iter / 10);
+                    *ptr++ = '0' + (iter % 10);
+                } else if (iter >= 10) {
+                    *ptr++ = '0' + (iter / 10);
+                    *ptr++ = '0' + (iter % 10);
+                } else {
+                    *ptr++ = '0' + iter;
+                }
             }
-            printf("\n");
+            *ptr++ = '\n';
+            fwrite(buffer, 1, ptr - buffer, stdout);
         }
     } else {
-        // ASCII output 
+        // ASCII output (Standard Y direction)
         for (int y = 0; y < config->height; ++y) {
+            char *ptr = buffer;
+            const int *row_start = &result_buffer[y * config->width];
+
             for (int x = 0; x < config->width; ++x) {
-                int iter = result_buffer[y * config->width + x];
-                putchar(cnt2char(iter, config->max_iter));
+                int iter = row_start[x];
+                *ptr++ = cnt2char(iter, config->max_iter);
             }
-            printf("\n");
+            *ptr++ = '\n';
+            fwrite(buffer, 1, ptr - buffer, stdout);
         }
     }
+
+    free(buffer);
 }
 
 int main(int argc, char *argv[]) {
