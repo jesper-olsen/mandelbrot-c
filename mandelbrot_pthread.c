@@ -126,7 +126,7 @@ void *thread_mandelbrot(void *arg) {
         int y_end = y_start + CHUNK_SIZE;
 
         if (y_start >= config->height) {
-            break; 
+            break;
         }
 
         if (y_end > config->height) {
@@ -148,7 +148,7 @@ void *thread_mandelbrot(void *arg) {
 
 //void final_output(const Config *config, const int *result_buffer) {
 //    if (config->png) {
-//        // Output for gnuplot 
+//        // Output for gnuplot
 //        for (int y = config->height - 1; y >= 0; --y) { // Loop reversed for gnuplot
 //            for (int x = 0; x < config->width; ++x) {
 //                printf("%s%d", (x > 0 ? ", " : ""), result_buffer[y * config->width + x]);
@@ -156,7 +156,7 @@ void *thread_mandelbrot(void *arg) {
 //            printf("\n");
 //        }
 //    } else {
-//        // ASCII output 
+//        // ASCII output
 //        for (int y = 0; y < config->height; ++y) {
 //            for (int x = 0; x < config->width; ++x) {
 //                int iter = result_buffer[y * config->width + x];
@@ -171,7 +171,7 @@ void final_output(const Config *config, const int *result_buffer) {
     // Calculate buffer size for one row:
     // Max 3 digits + 2 chars (", ") = 5 bytes/pixel. Add padding.
     size_t row_buffer_size = (size_t)config->width * 6 + 64;
-    
+
     char *buffer = malloc(row_buffer_size);
     if (!buffer) {
         perror("Failed to allocate output buffer");
@@ -228,7 +228,7 @@ void final_output(const Config *config, const int *result_buffer) {
 }
 
 int main(int argc, char *argv[]) {
-     Config config = {
+    Config config = {
         .width = 100,
         .height = 75,
         .png = false,
@@ -249,9 +249,9 @@ int main(int argc, char *argv[]) {
         perror("Failed to allocate result buffer");
         return EXIT_FAILURE;
     }
- 
+
     pthread_t threads[NUM_THREADS];
-    ThreadArgs args[NUM_THREADS]; 
+    ThreadArgs args[NUM_THREADS];
 
     for (int i = 0; i < NUM_THREADS; ++i) {
         args[i].config = &config;
@@ -264,7 +264,7 @@ int main(int argc, char *argv[]) {
     }
 
     final_output(&config, result_buffer);
-    
+
     free(result_buffer);
     return EXIT_SUCCESS;
 

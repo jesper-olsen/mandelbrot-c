@@ -115,11 +115,11 @@ void gptext_output(const Config *config) {
     // Create a buffer to store one row of text data.
     // Estimate size: max 3 digits for iter (255), 2 chars for ", ", plus safety.
     // 5000 width * 6 chars/pixel = 30,000 bytes. 64KB is plenty safe.
-    char buffer[65536]; 
+    char buffer[65536];
 
     for (int y = config->height; y > 0; --y) {
         char *ptr = buffer; // Pointer to the current position in the buffer
-        
+
         for (int x = 0; x < config->width; ++x) {
             double real = config->ll_x + x * fwidth / config->width;
             double imag = config->ur_y - y * fheight / config->height;
@@ -131,7 +131,7 @@ void gptext_output(const Config *config) {
                 *ptr++ = ',';
                 *ptr++ = ' ';
             }
-            
+
             // Convert integer to string (fast manual itoa)
             if (iter >= 100) {
                 *ptr++ = '0' + (iter / 100);
@@ -144,7 +144,7 @@ void gptext_output(const Config *config) {
             } else {
                 *ptr++ = '0' + iter;
             }
-            
+
             // Safety check: Flush buffer if it's getting full
             if (ptr - buffer > sizeof(buffer) - 32) {
                 fwrite(buffer, 1, ptr - buffer, stdout);
@@ -152,7 +152,7 @@ void gptext_output(const Config *config) {
             }
         }
         *ptr++ = '\n';
-        
+
         // Write the remaining buffer for this row
         fwrite(buffer, 1, ptr - buffer, stdout);
     }
