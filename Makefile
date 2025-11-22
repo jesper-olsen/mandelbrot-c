@@ -1,8 +1,7 @@
-CC = gcc
-CFLAGS = -Wall -O3 -std=c23 -ffast-math -march=native
+CC = clang
+CFLAGS = -Wall -O3 -std=c23 -ffast-math -march=native -DNDEBUG
+#CFLAGS = -Wall -O0 -std=c23 -g -fsanitize=address -fsanitize=thread
 LDFLAGS = -lm
-
-ASTYLE  := astyle --suffix=none --align-pointer=name --pad-oper
 
 TARGETS := mandelbrot mandelbrot_complex mandelbrot_pthread
 
@@ -20,4 +19,4 @@ clean:
 	rm -f $(TARGETS)
 
 fmt:
-	$(ASTYLE) $(SRC) $(HEADER)
+	astyle --suffix=none --align-pointer=name --pad-oper $(SRC) $(HEADER)
