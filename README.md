@@ -1,12 +1,13 @@
 # Mandelbrot in C
 
-This repository contains a modern C (C99) implementation for generating visualizations of the Mandelbrot set. It is part of a larger project comparing implementations across various programming languages.
+This repository contains a modern C (C99) implementation for generating visualizations of the Mandelbrot set. 
 
 The program compiles to a single native executable. It can render the Mandelbrot set directly to the terminal as ASCII art or produce a data file for `gnuplot` to generate a high-resolution PNG image.
 
 ### Other Language Implementations
 
-This project compares the performance and features of Mandelbrot set generation in different languages.
+This project is part of a suite of mandelbrot implementations in different languages.
+
 Single Thread/Multi-thread shows the number of seconds it takes to do a 5000x5000 calculation.
 
 

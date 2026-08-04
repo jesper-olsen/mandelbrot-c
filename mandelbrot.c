@@ -96,7 +96,7 @@ void ascii_output(const Config *config) {
 //    double fwidth = config->ur_x - config->ll_x;
 //    double fheight = config->ur_y - config->ll_y;
 //
-//    for (int y = config->height; y > 0; --y) {
+//    for (int y = config->height-1; y >= 0; --y) {
 //        for (int x = 0; x < config->width; ++x) {
 //            double real = config->ll_x + x * fwidth / config->width;
 //            double imag = config->ur_y - y * fheight / config->height;
@@ -117,7 +117,7 @@ void gptext_output(const Config *config) {
     // 5000 width * 6 chars/pixel = 30,000 bytes. 64KB is plenty safe.
     char buffer[65536];
 
-    for (int y = config->height; y > 0; --y) {
+    for (int y = config->height-1; y >= 0; --y) {
         char *ptr = buffer; // Pointer to the current position in the buffer
 
         for (int x = 0; x < config->width; ++x) {
