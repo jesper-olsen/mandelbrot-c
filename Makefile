@@ -3,9 +3,9 @@ CFLAGS = -Wall -O3 -std=c23 -ffast-math -march=native -DNDEBUG
 #CFLAGS = -Wall -O0 -std=c23 -g -fsanitize=address -fsanitize=thread
 LDFLAGS = -lm
 
-TARGETS := mandelbrot mandelbrot_complex mandelbrot_pthread
+TARGETS := mandelbrot mandelbrot_complex mandelbrot_pthread mandelbrot_simd_pthread 
 
-SRC     := mandelbrot.c mandelbrot_complex.c mandelbrot_pthread.c
+SRC     := mandelbrot.c mandelbrot_complex.c mandelbrot_pthread.c  mandelbrot_simd_pthread.c
 HEADER  :=
 
 .PHONY: all clean fmt

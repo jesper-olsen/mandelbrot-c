@@ -23,7 +23,7 @@
 #include <stdbool.h>
 #include <math.h>
 
-#define NUM_THREADS 9 // Adjust based on CPU core count
+#define NUM_THREADS 10 // Adjust based on CPU core count
 #define CHUNK_SIZE  1  // Number of rows to process per task
 
 atomic_int global_next_y = 0; // threads get the next row to process from this global atomic
