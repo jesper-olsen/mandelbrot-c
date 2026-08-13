@@ -14,7 +14,7 @@ Single Thread/Multi-thread shows the number of seconds it takes to do a 5000x500
 | Language    | Repository                                                         | Single Thread   | Multi-Thread | Simd | Multi-Thread + Simd |
 | :--------   | :----------------------------------------------------------------- | ---------------:| -----------: | ----:| ------------------: |
 | Awk         | [mandelbrot-awk](https://github.com/jesper-olsen/mandelbrot-awk)   |           417.9 |              |      |                     |
-| C           | [mandelbrot-c](https://github.com/jesper-olsen/mandelbrot-c)       |             3.6 |          0.6 |  1.1 |               0.2   |
+| C           | [mandelbrot-c](https://github.com/jesper-olsen/mandelbrot-c)       |             3.6 |          0.6 |  0.7 |               0.2   |
 | Erlang      | [mandelbrot_erl](https://github.com/jesper-olsen/mandelbrot_erl)   |                 |              |      |                     |
 | Fortran     | [mandelbrot-f](https://github.com/jesper-olsen/mandelbrot-f)       |                 |              |      |                     |
 | Lua         | [mandelbrot-lua](https://github.com/jesper-olsen/mandelbrot-lua)   |            33.2 |              |      |                     |
@@ -127,8 +127,8 @@ time ./mandelbrot_pthread  png=1 width=5000 height=5000 > image.dat
 
 **Generating a 5000x5000 data file with SIMD and multiple worker threads:**
 ```sh
-
-./mandelbrot_simd_pthread png=1 width=5000 height=5000 > image.dat  
-1.53s user 0.05s system 679% cpu 0.233 total
+time ./mandelbrot_simd_pthread_v8 png=1 width=5000 height=5000 > image.dat
+0.95s user 0.05s system 631% cpu 0.160 total
 ```
+
 
