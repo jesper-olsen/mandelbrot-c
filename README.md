@@ -131,5 +131,10 @@ time ./mandelbrot_pthread  png=1 width=5000 height=5000 > image.dat
 time ./mandelbrot_simd_pthread_v8 png=1 width=5000 height=5000 > image.dat
 0.95s user 0.05s system 631% cpu 0.160 total
 ```
+**Generating a 20000x20000 data file with SIMD and multiple worker threads:**
+```sh
+time ./mandelbrot_simd_pthread_v8 png=1 width=20000 height=20000 > image.dat
+13.51s user 0.47s system 679% cpu 2.057 total
+```
 
 
