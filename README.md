@@ -17,6 +17,7 @@ Single Thread/Multi-thread shows the number of seconds it takes to do a 5000x500
 | **C**       | [mandelbrot-c](https://github.com/jesper-olsen/mandelbrot-c)       |             3.6 |          0.6 |  0.7 |               0.2   |
 | Erlang      | [mandelbrot_erl](https://github.com/jesper-olsen/mandelbrot_erl)   |                 |              |      |                     |
 | Fortran     | [mandelbrot-f](https://github.com/jesper-olsen/mandelbrot-f)       |                 |              |      |                     |
+| Java        | [mandelbrot-java](https://github.com/jesper-olsen/mandelbrot-java) |             3.9 |          0.8 |      |                     |
 | Lua         | [mandelbrot-lua](https://github.com/jesper-olsen/mandelbrot-lua)   |            33.2 |              |      |                     |
 | Mojo        | [mandelbrot-mojo](https://github.com/jesper-olsen/mandelbrot-mojo) |             3.8 |          1.2 |  0.7 |               0.4   |
 | Nushell     | [mandelbrot-nu](https://github.com/jesper-olsen/mandelbrot-nu)     |                 |              |      |                     |
@@ -116,7 +117,7 @@ time ./mandelbrot png=1 width=1000 height=750 > image.dat
 **Generating a 5000x5000 data file:**
 ```sh
 time ./mandelbrot png=1 width=5000 height=5000 > image.dat
-8.85s user 0.13s system 98% cpu 9.137 total
+3.57s user 0.04s system 99% cpu 3.625 total
 ```
 
 **Generating a 5000x5000 data file multiple worker threads**
